@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="ur">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>King Shoes Marketplace</title>
+<style>
+:root{--red:#d71920;--dark:#17202a;--bg:#f4f6f8;--muted:#667085;--line:#e5e7eb}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:#18212b;font-family:Arial,"Noto Nastaliq Urdu",sans-serif}
+header{background:linear-gradient(120deg,#171717,#3b1012);color:white;padding:18px 14px;text-align:center}
+header h1{margin:0;font-size:25px}header p{margin:7px 0 0;color:#f4dede}
+nav{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;background:white;padding:10px;position:sticky;top:0;z-index:5;box-shadow:0 2px 8px #0001}
+button,.btn{border:0;border-radius:9px;padding:11px 14px;background:#222;color:white;font-weight:700;cursor:pointer}
+button.red,.active{background:var(--red)!important;color:white!important}button.light{background:#f0f1f3;color:#222}
+main{max-width:1100px;margin:18px auto;padding:0 12px}.panel{background:white;border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:16px;box-shadow:0 3px 12px #00000008}
+h2{font-size:20px;margin:0 0 14px}.hint{color:var(--muted);font-size:13px;line-height:1.6}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px}
+label{display:block;font-size:14px;font-weight:700;margin:10px 0 6px}
+input,select,textarea{width:100%;padding:12px;border:1px solid #cfd4dc;border-radius:9px;font:inherit;background:white}
+textarea{min-height:75px;resize:vertical}
+.pills{display:flex;gap:7px;flex-wrap:wrap}.pill{border:1px solid #cfd4dc;background:white;color:#333;border-radius:8px;padding:9px 12px;cursor:pointer}.pill.selected{background:var(--red);border-color:var(--red);color:white}
+.size-row{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:8px 0}.size-option{border:1px solid #cfd4dc;border-radius:9px;padding:8px;text-align:center;background:#fff}.size-option input{width:auto;margin:0 3px 0 0}.size-option:has(input:checked){background:#ffe8e8;border:2px solid var(--red);color:#b00008}
+.product-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
+.product{border:1px solid var(--line);border-radius:13px;overflow:hidden;background:#fff}
+.product img{width:100%;height:210px;object-fit:contain;background:#f8f8f8}
+.product-body{padding:12px}.product h3{margin:0 0 6px;font-size:17px}.price{font-size:19px;color:var(--red);font-weight:800}
+.small{font-size:12px;color:var(--muted)}.stocktag{display:inline-block;background:#edf8ef;color:#176b2c;border-radius:20px;padding:4px 8px;font-size:12px;margin:3px}
+.hidden{display:none!important}.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.row>*{flex:1}
+footer{text-align:center;padding:25px;color:#667085;font-size:12px}
+.account-btn{background:#333}.account-btn.clicked{background:var(--red)}
+.notice{background:#fff7e6;border:1px solid #f3d28b;padding:10px;border-radius:9px;font-size:13px;line-height:1.6}
+@media(max-width:520px){header h1{font-size:21px}.size-row{grid-template-columns:repeat(4,1fr)}nav button{padding:9px 11px}}
+</style>
+</head>
+<body>
+<header>
+  <h1>👟 King Shoes Marketplace</h1>
+  <p>بلوچستان میں جوتوں کی خرید و فروخت کا آسان پلیٹ فارم</p>
+</header>
+<nav>
+  <button class="red" onclick="showPage('shop',this)">گاہکوں کا صفحہ</button>
+  <button onclick="showPage('seller',this)">دکاندار / نئی پوسٹ</button>
+  <button onclick="showPage('account',this)">Customer Account</button>
+  <button onclick="showPage('orders',this)">میرے آرڈرز</button>
+</nav>
+<main>
+<section id="shop" class="page">
+  <div class="panel">
+    <h2>جوتے تلاش کریں</h2>
+    <div class="grid">
+      <div><label>شہر منتخب کریں</label><select id="cityFilter" onchange="renderProducts()"><option value="">تمام شہر</option></select></div>
+      <div><label>تلاش</label><input id="search" placeholder="جوتے یا دکان کا نام..." oninput="renderProducts()"></div>
+      <div><label>قیمت کی ترتیب</label><select id="sort" onchange="renderProducts()"><option value="">پہلے نئے</option><option value="low">کم قیمت پہلے</option><option value="high">زیادہ قیمت پہلے</option></select></div>
+    </div>
+  </div>
+  <div id="products" class="product-grid"></div>
+</section>
+
+<section id="seller" class="page hidden">
+  <div class="panel">
+    <h2>دکاندار: جوتوں کی نئی پوسٹ</h2>
+    <div class="notice">یہ فی الحال ڈیمو ویب سائٹ ہے۔ پوسٹ اسی موبائل/براؤزر میں محفوظ ہوگی۔ اصل دکاندار اکاؤنٹس، مشترکہ اسٹاک اور آن لائن تصویر اسٹوریج Firebase لگانے کے بعد فعال ہوں گے۔</div>
+    <form id="productForm">
+      <div class="grid">
+        <div><label>دکان کا نام</label><input id="shopName" required placeholder="مثلاً King Shoes Loralai"></div>
+        <div><label>دکاندار کا فون / WhatsApp</label><input id="sellerPhone" placeholder="03xxxxxxxxx"></div>
+        <div><label>شہر</label><select id="sellerCity" required></select></div>
+        <div><label>جوتے کا نام</label><input id="productName" required placeholder="مثلاً Sports Shoes"></div>
+        <div><label>قیمت (روپے)</label><input id="price" type="number" min="1" required placeholder="5000"></div>
+        <div><label>برانڈ / قسم</label><input id="category" placeholder="Sports / Casual / Formal"></div>
+      </div>
+      <label>رنگ منتخب کریں (ایک یا زیادہ)</label>
+      <div id="colorChoices" class="pills">
+        <button type="button" class="pill" data-color="Black">Black</button>
+        <button type="button" class="pill" data-color="White">White</button>
+        <button type="button" class="pill" data-color="Brown">Brown</button>
+        <button type="button" class="pill" data-color="Blue">Blue</button>
+      </div>
+      <label>دستیاب سائز منتخب کریں اور ہر سائز کے جوڑے لکھیں</label>
+      <p class="hint">جس سائز پر کلک کریں گے وہ سرخ ہوجائے گا۔ صرف منتخب سائز گاہک کو دکھائی دیں گے۔ مثال: 39 کے 2 جوڑے، 40 کے 1، 44 کے 3۔</p>
+      <div id="sizeChoices" class="size-row"></div>
+      <div class="grid">
+        <div><label>تصویر کا لنک یا ImgBB HTML کوڈ</label><textarea id="imageInput" placeholder="Direct image URL یا ImgBB کا مکمل HTML کوڈ یہاں پیسٹ کریں"></textarea><p class="hint">Direct image URL عموماً https://i.ibb.co/ سے شروع ہوتا ہے۔ ImgBB کا HTML کوڈ دیں تو ویب سائٹ اس میں سے تصویر کا لنک نکال لے گی۔</p></div>
+        <div><label>یا موبائل سے تصویر منتخب کریں</label><input id="imageFile" type="file" accept="image/*"><p class="hint">مقامی تصویر صرف اسی براؤزر میں ڈیمو کے طور پر رکھی جائے گی۔ بڑی تصویر اسٹوریج بھر سکتی ہے۔ 2160 × 3840 تجویز کردہ حد ہے؛ اس سے کم تصویر بھی قبول ہے۔</p><img id="imagePreview" class="hidden" style="max-width:100%;max-height:180px;object-fit:contain;margin-top:8px" alt="تصویر کا پری ویو"></div>
+      </div>
+      <label>تفصیل</label><textarea id="description" placeholder="جوتے کی حالت، ڈیلیوری اور دیگر معلومات"></textarea>
+      <p><button class="red" type="submit">پوسٹ شائع کریں</button></p>
+    </form>
+  </div>
+</section>
+
+<section id="account" class="page hidden">
+ <div class="panel">
+  <h2>Customer Account</h2>
+  <p class="hint">ابھی یہ صرف اسی موبائل/براؤزر میں محفوظ ہونے والا ڈیمو اکاؤنٹ ہے۔ اصلی لاگ اِن اور دوسرے موبائل پر اکاؤنٹ کھولنے کے لیے Firebase Authentication درکار ہوگا۔</p>
+  <form id="accountForm">
+   <div class="grid">
+    <div><label>آپ کا نام</label><input id="customerName" required></div>
+    <div><label>موبائل نمبر</label><input id="customerPhone" required placeholder="03xxxxxxxxx"></div>
+    <div><label>ای میل (اختیاری)</label><input id="customerEmail" type="email"></div>
+    <div><label>شہر</label><select id="customerCity"></select></div>
+   </div>
+   <label>ڈیلیوری کا پتہ</label><textarea id="customerAddress" placeholder="اپنا مکمل پتہ لکھیں"></textarea>
+   <button type="submit" class="account-btn" id="accountSubmit">اکاؤنٹ محفوظ کریں</button>
+  </form>
+  <div id="accountInfo" class="hidden"></div>
+  <div class="row" style="margin-top:12px">
+   <a id="whatsappContact" class="btn" style="text-align:center;text-decoration:none;background:#168b48" href="https://wa.me/" target="_blank">WhatsApp</a>
+   <a id="gmailContact" class="btn" style="text-align:center;text-decoration:none;background:#b3261e" href="https://mail.google.com/" target="_blank">Gmail</a>
+  </div>
+ </div>
+</section>
+
+<section id="orders" class="page hidden">
+ <div class="panel"><h2>میرے آرڈرز</h2><div id="ordersList">ابھی کوئی آرڈر نہیں۔</div></div>
+</section>
+</main>
+<footer>King Shoes Marketplace — Demo Version<br>ابھی اصلی ادائیگی، Firebase، خودکار نوٹیفکیشن یا لائیو ڈیلیوری ٹریکنگ فعال نہیں۔</footer>
+
+<script>
+const CITIES=["Loralai","Duki","Rakhni","Barkhan","Qila Saifullah","Zhob","Musakhel","Quetta","Kuchlak","Chaman","Qila Abdullah"];
+const SIZES=[39,40,41,42,43,44,45], COLORS=["Black","White","Brown","Blue"];
+let products=JSON.parse(localStorage.getItem("ksm_products")||"[]");
+let orders=JSON.parse(localStorage.getItem("ksm_orders")||"[]");
+let selectedColors=new Set(), selectedSizes=new Set(), imageData="";
+const $=id=>document.getElementById(id);
+function save(){localStorage.setItem("ksm_products",JSON.stringify(products));localStorage.setItem("ksm_orders",JSON.stringify(orders))}
+function fillSelect(id,all=false){let s=$(id);s.innerHTML=(all?'<option value="">تمام شہر</option>':'<option value="">شہر منتخب کریں</option>')+CITIES.map(c=>`<option>${c}</option>`).join("")}
+["cityFilter","sellerCity","customerCity"].forEach(id=>fillSelect(id,id==="cityFilter"));
+$("sizeChoices").innerHTML=SIZES.map(n=>`<div class="size-option"><label style="margin:0"><input type="checkbox" value="${n}" onchange="toggleSize(${n},this)"> ${n}</label><input aria-label="سائز ${n} کے جوڑے" type="number" min="1" placeholder="جوڑے" id="qty${n}" style="padding:6px;margin-top:6px" disabled></div>`).join("");
+function toggleSize(n,el){if(el.checked){selectedSizes.add(n);$("qty"+n).disabled=false}else{selectedSizes.delete(n);$("qty"+n).disabled=true;$("qty"+n).value=""}}
+document.querySelectorAll("[data-color]").forEach(b=>b.addEventListener("click",()=>{let c=b.dataset.color;if(selectedColors.has(c)){selectedColors.delete(c);b.classList.remove("selected")}else{selectedColors.add(c);b.classList.add("selected")}}));
+function extractImage(raw){raw=raw.trim();let m=raw.match(/<img[^>]+src=["']([^"']+)["']/i);if(m)return m[1];if(/^https?:\/\/\S+$/i.test(raw))return raw;return ""}
+$("imageInput").addEventListener("input",()=>{let u=extractImage($("imageInput").value);if(u){$("imagePreview").src=u;$("imagePreview").classList.remove("hidden")}else if(!$("imageFile").files.length){$("imagePreview").classList.add("hidden")}});
+$("imageFile").addEventListener("change",e=>{let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{imageData=r.result;$("imagePreview").src=imageData;$("imagePreview").classList.remove("hidden")};r.readAsDataURL(f)});
+$("productForm").addEventListener("submit",e=>{e.preventDefault();let variants=[];for(let n of selectedSizes){let q=Number($("qty"+n).value);if(q>0)variants.push({size:n,qty:q})}if(!variants.length){alert("کم از کم ایک سائز منتخب کریں اور جوڑوں کی تعداد لکھیں۔");return}if(!selectedColors.size){alert("کم از کم ایک رنگ منتخب کریں۔");return}let image=extractImage($("imageInput").value)||imageData;if(!image){alert("براہ کرم تصویر کا Direct URL، ImgBB HTML کوڈ یا موبائل تصویر منتخب کریں۔");return}
+products.unshift({id:Date.now(),shop:$("shopName").value,phone:$("sellerPhone").value,city:$("sellerCity").value,name:$("productName").value,price:Number($("price").value),category:$("category").value,colors:[...selectedColors],variants, image,desc:$("description").value,created:Date.now()});save();e.target.reset();selectedColors.clear();selectedSizes.clear();document.querySelectorAll("[data-color]").forEach(b=>b.classList.remove("selected"));SIZES.forEach(n=>{$("qty"+n).disabled=true});imageData="";$("imagePreview").classList.add("hidden");renderProducts();showPage("shop",document.querySelector("nav button"));alert("آپ کی پوسٹ اس ڈیوائس پر محفوظ ہوگئی۔")});
+function renderProducts(){let list=[...products],city=$("cityFilter").value,term=$("search").value.toLowerCase(),sort=$("sort").value;if(city)list=list.filter(p=>p.city===city);if(term)list=list.filter(p=>(p.name+p.shop+p.city+p.category).toLowerCase().includes(term));if(sort==="low")list.sort((a,b)=>a.price-b.price);if(sort==="high")list.sort((a,b)=>b.price-a.price);$("products").innerHTML=list.length?list.map(p=>`<article class="product"><img src="${esc(p.image)}" alt="${esc(p.name)}" onerror="this.style.display='none'"><div class="product-body"><h3>${esc(p.name)}</h3><div class="price">Rs. ${p.price.toLocaleString("en-PK")}</div><div class="small">${esc(p.shop)} · ${esc(p.city)}</div><p>${p.colors.map(c=>`<span class="stocktag">${esc(c)}</span>`).join("")}</p><p>${p.variants.map(v=>`<span class="stocktag">Size ${v.size}: ${v.qty} جوڑے</span>`).join("")}</p><p class="small">${esc(p.desc||"")}</p><label>اپنا سائز منتخب کریں</label><select id="buy${p.id}">${p.variants.map(v=>`<option value="${v.size}">${v.size} — ${v.qty} دستیاب</option>`).join("")}</select><button class="red" style="width:100%;margin-top:9px" onclick="buy(${p.id})">آرڈر کریں</button></div></article>`).join(""):"<div class='panel'>ابھی کوئی جوتا موجود نہیں۔ دکاندار نئی پوسٹ شامل کر سکتے ہیں۔</div>"}
+function buy(id){let p=products.find(x=>x.id===id);let size=Number($("buy"+id).value);let v=p.variants.find(x=>x.size===size);if(!v||v.qty<1){alert("یہ سائز دستیاب نہیں۔");return}let customer=JSON.parse(localStorage.getItem("ksm_customer")||"null");if(!customer){alert("آرڈر سے پہلے Customer Account بنائیں۔");showPage("account");return}let qty=Number(prompt("کتنے جوڑے آرڈر کرنے ہیں؟", "1"));if(!Number.isInteger(qty)||qty<1||qty>v.qty)return alert("دستیاب تعداد درج کریں۔");v.qty-=qty;orders.unshift({id:Date.now(),product:p.name,shop:p.shop,phone:p.phone,city:p.city,size,qty,total:qty*p.price,status:"آرڈر موصول",customer,created:new Date().toLocaleString()});save();renderProducts();renderOrders();alert("ڈیمو آرڈر محفوظ ہوگیا۔ یہ حقیقی دکاندار کو نہیں بھیجا گیا۔")}
+function renderOrders(){let c=JSON.parse(localStorage.getItem("ksm_customer")||"null");let mine=orders.filter(o=>!c||o.customer.phone===c.phone);$("ordersList").innerHTML=mine.length?mine.map(o=>`<div class="panel"><b>${esc(o.product)}</b><p>سائز: ${o.size} | تعداد: ${o.qty} | کل: Rs. ${o.total}</p><p>دکان: ${esc(o.shop)} — ${esc(o.city)}</p><span class="stocktag">${esc(o.status)}</span></div>`).join(""):"ابھی کوئی آرڈر نہیں۔"}
+$("accountForm").addEventListener("submit",e=>{e.preventDefault();let c={name:$("customerName").value,phone:$("customerPhone").value,email:$("customerEmail").value,city:$("customerCity").value,address:$("customerAddress").value};localStorage.setItem("ksm_customer",JSON.stringify(c));$("accountSubmit").classList.add("clicked");$("accountInfo").classList.remove("hidden");$("accountInfo").innerHTML=`<div class="notice" style="margin-top:12px"><b>${esc(c.name)}</b><br>${esc(c.phone)} · ${esc(c.city)}<br>${esc(c.address)}<button class="light" onclick="copyAccount()" style="margin-top:8px;color:#222">▢ اکاؤنٹ معلومات کاپی کریں</button></div>`;$("whatsappContact").href="https://wa.me/?text="+encodeURIComponent("میرا King Shoes Marketplace اکاؤنٹ: "+c.name+"، "+c.phone);$("gmailContact").href="mailto:?subject="+encodeURIComponent("King Shoes Marketplace Account")+"&body="+encodeURIComponent(c.name+"\n"+c.phone+"\n"+c.city+"\n"+c.address);alert("ڈیمو اکاؤنٹ اسی ڈیوائس میں محفوظ ہوگیا۔")});
+function copyAccount(){let c=JSON.parse(localStorage.getItem("ksm_customer")||"{}");navigator.clipboard?.writeText([c.name,c.phone,c.email,c.city,c.address].join("\n")).then(()=>alert("اکاؤنٹ معلومات کاپی ہوگئیں۔")).catch(()=>alert("کاپی کی سہولت اس براؤزر میں دستیاب نہیں۔"))}
+function showPage(id,btn){document.querySelectorAll(".page").forEach(x=>x.classList.add("hidden"));$(id).classList.remove("hidden");document.querySelectorAll("nav button").forEach(x=>x.classList.remove("red"));if(btn)btn.classList.add("red");if(id==="orders")renderOrders()}
+function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+renderProducts();renderOrders();
+</script>
+</body></html>
